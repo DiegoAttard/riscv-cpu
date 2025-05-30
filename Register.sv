@@ -5,7 +5,6 @@ module Register #(
 	input logic reset,
 	input logic write_in,
 	input logic [DataWidth-1:0] data_in,
-	
 	output logic [DataWidth-1:0] data_out
 );
 	
