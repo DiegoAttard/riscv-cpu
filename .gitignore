@@ -1,3 +1,4 @@
 # ignore following files
 RISC_CPU.qpf
 RISC_CPU.qsf
+*.bak
