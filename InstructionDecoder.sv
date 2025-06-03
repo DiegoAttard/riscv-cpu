@@ -1,4 +1,4 @@
-module InstructionDecoder(
+module InstructionDecoder (
 	input logic [31:0] instruction,
 	output logic [5:0] op,
 	output logic [4:0] rs,
@@ -6,8 +6,8 @@ module InstructionDecoder(
 	output logic [4:0] rd,
 	output logic [4:0] shamt,
 	output logic [5:0] funct,
-	output logic [15:0] immediate,
-	output logic [25:0] address
+	output logic [15:0] imm,
+	output logic [25:0] addr
 );
 	
 	// R-Format (op, rs, rt, rd, shamt, funct)
@@ -19,7 +19,7 @@ module InstructionDecoder(
 	assign rd = instruction[15:11];
 	assign shamt = instruction[10:6];
 	assign funct = instruction[5:0];
-	assign immediate = instruction[15:0];
-	assign address = instruction[25:0];
+	assign imm = instruction[15:0];
+	assign addr = instruction[25:0];
 
 endmodule
