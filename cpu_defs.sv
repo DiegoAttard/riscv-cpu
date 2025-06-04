@@ -6,6 +6,9 @@ package cpu_defs;
 	parameter OPCODE_LOAD = 7'b0000011;
 	parameter OPCODE_STORE = 7'b0100011;
 	parameter OPCODE_BTYPE = 7'b1100011;
+	parameter OPCODE_JAL = 7'b1101111;
+	parameter OPCODE_JALR = 7'b1100111;
+	parameter OPCODE_NOP = 7'b0000000;
 	
 	//function 3
 	parameter FUNCT3_ADD_SUB = 3'b000;
@@ -13,8 +16,12 @@ package cpu_defs;
 	parameter FUNCT3_OR = 3'b110;
 	parameter FUNCT3_AND = 3'b111;
 	parameter FUNCT3_SLL = 3'b001;
-	parameter FUNCT3_SRL = 3'b101;
-	parameter FUNCT3_SRA = 3'b101;
+	parameter FUNCT3_SRL_SRA = 3'b101;
+	parameter FUNCT3_ADDI = 3'b000;
+	parameter FUNCT3_BEQ = 3'b000;
+	parameter FUNCT3_BNE = 3'b001;
+	parameter FUNCT3_BLT = 3'b100;
+	parameter FUNCT3_BGE = 3'b101;
 	
 	//function 7
 	parameter FUNCT7_ADD = 7'b0000000;
