@@ -1,11 +1,15 @@
-include alu_defs::*;
+include cpu_defs::*;
 
 module ControlUnit(
-	input logic [5:0] op,
+	input logic [31:0] instruction,
 	output logic regWrite, memWrite, memRead, ALU_src,
 	output logic [3:0] ALU_op
 );
 
+
+	//instruction formats can be seen in detail in reference document
+	//reference document is named "RISCV_Reference.pdf"
+	
 	always_comb begin
 		
 		//setting default values
@@ -15,91 +19,183 @@ module ControlUnit(
 		ALU_src = 0;
 		ALU_op = 0;
 		
-		case(op)
-			6'b000000: begin //add
-				regWrite = 1;
-				ALU_op = ADD;
+		case(instruction[6:0])
+		
+			// R-Type
+			OPCODE_RTYPE: begin
+				case(instruction[14:12])
+				
+				//add or sub operation
+				FUNCT3_ADD_SUB: begin
+					case(instruction[31:25])
+					FUNCT7_ADD: begin
+						regWrite = 1;
+						ALU_op = ALU_ADD;
+					end
+					FUNCT7_SUB: begin
+						regWrite = 1;
+						ALU_op = ALU_SUB;
+					end
+				end
+				
+				//xor operation
+				FUNCT3_XOR: begin
+					regWrite = 1;
+					ALU_op = ALU_XOR;
+				end
+				
+				//or operation
+				FUNCT3_OR: begin
+					regWrite = 1;
+					ALU_op = ALU_OR;
+				end
+				
+				//and operation
+				FUNCT3_AND: begin
+					regWrite = 1;
+					ALU_op = ALU_AND;
+				end
+				
+				//shift left logical operation
+				FUNCT3_SLL: begin
+					regWrite = 1;
+					ALU_op = ALU_SLL;
+				end
+				
+				//shift right operations (srl/sra)
+				FUNCT3_SRL_SRA: begin
+					case(instruction[31:25])
+						FUNCT7_SRL: begin
+							regWrite = 1;
+							ALU_op = ALU_SRL;
+						end
+						FUNCT7_SRA: begin
+							regWrite = 1;
+							ALU_op = ALU_SRA;
+						end
+					endcase
+				end
 			end
-			6'b000001: begin //addi
-				regWrite = 1;
-				ALU_src = 1;
-				ALU_op = ADD;
+			
+			
+			// I_Type
+			OPCODE_ITYPE: begin
+				case(instruction[14:12])
+					
+					//addi operation
+					FUNCT3_ADDI: begin
+						regWrite = 1;
+						ALU_src = 1;
+						ALU_op = ALU_ADD;
+					end
+					
+					//xori operation
+					FUNCT3_XOR: begin
+						regWrite = 1;
+						ALU_src = 1;
+						ALU_op = ALU_XOR;
+					end
+					
+					//ori operation
+					FUNCT3_OR: begin
+						regWrite = 1;
+						ALU_src = 1;
+						ALU_op = ALU_OR;
+					end
+					
+					//andi operation
+					FUNCT3_AND: begin
+						regWrite = 1;
+						ALU_src = 1;
+						ALU_op = ALU_AND;
+					end
+					
+					//shift left logical immediate operation
+					FUNCT3_SLL: begin
+						regWrite = 1;
+						ALU_src = 1;
+						ALU_op = ALU_SLL;
+					end
+					
+					//shift right immediate operations (srli/srai)
+					FUNCT3_SRL_SRA: begin
+						case(instruction[31:25])
+							FUNCT7_SRL: begin
+								regWrite = 1;
+								ALU_src = 1;
+								ALU_op = ALU_SRL;
+							end
+							FUNCT7_SRA: begin
+								regWrite = 1;
+								ALU_src = 1;
+								ALU_op = ALU_SRA;
+							end
+						endcase
+					end
+					
+				endcase
 			end
-			6'b000010: begin //sub
-				regWrite = 1;
-				ALU_op = SUB;
-			end
-			6'b000011: begin //and
-				regWrite = 1;
-				ALU_op = AND;
-			end
-			6'b000100: begin //andi
-				regWrite = 1;
-				ALU_src = 1;
-				ALU_op = AND;
-			end
-			6'b000101: begin //or
-				regWrite = 1;
-				ALU_op = OR;
-			end
-			6'b000110: begin //ori
-				regWrite = 1;
-				ALU_src = 1;
-				ALU_op = OR;
-			end
-			6'b000111: begin //xor
-				regWrite = 1;
-				ALU_op = XOR;
-			end
-			6'b001000: begin //sll
-				regWrite = 1;
-				ALU_op = SLL;
-			end
-			6'b001001: begin //srl
-				regWrite = 1;
-				ALU_op = SRL;
-			end
-			6'b001010: begin //sra
-				regWrite = 1;
-				ALU_op = SRA;
-			end
-			6'b001011: begin //ld
+			
+			//load operation
+			OPCODE_LOAD: begin
 				regWrite = 1;
 				memRead = 1;
 				ALU_src = 1;
-				ALU_op = ADD;
+				ALU_op = ALU_ADD;
 			end
-			6'b001100: begin //stw
+			
+			//store operation
+			OPCODE_STORE: begin
 				memWrite = 1;
 				ALU_src = 1;
-				ALU_op = ADD;
+				ALU_op = ALU_ADD;
 			end
-			6'b001101: begin //beq
+			
+			// B-Type
+			OPCODE_BTYPE: begin
+				case(instruction[14:12])
+				
+					//branch if equal operation
+					FUNCT3_BEQ: begin
+						regWrite = 1;
+						ALU_op = ALU_BEQ;
+					end
+					
+					//branch if not equal operation
+					FUNCT3_BNE: begin
+						regWrite = 1;
+						ALU_op = ALU_BNE;
+					end
+					
+					//branch if less than operation
+					FUNCT3_BLT: begin
+						regWrite = 1;
+						ALU_op = ALU_BLT;
+					end
+					
+					//branch if greater than operation
+					FUNCT3_BGE: begin
+						regWrite = 1;
+						ALU_op = ALU_BGE;
+					end
+				endcase
+			end
+			
+			//jump and link operation
+			OPCODE_JAL: begin
 				regWrite = 1;
-				ALU_op = BEQ;
+				ALU_op = ALU_ADD;
 			end
-			6'b001110: begin //bne
+			
+			//jump and link reg operation
+			OPCODE_JALR: begin
 				regWrite = 1;
-				ALU_op = BNE;
+				ALU_op = ALU_ADD;
 			end
-			6'b001111: begin //blt
-				regWrite = 1;
-				ALU_op = BLT;
-			end
-			6'b010000: begin //bge
-				regWrite = 1;
-				ALU_op = BGE;
-			end
-			6'b010001: begin //jal
-				regWrite = 1;
-				ALU_op = ADD;
-			end
-			6'b010010: begin //jalr
-				regWrite = 1;
-				ALU_op = ADD;
-			end
-			6'b010011: begin //nop
-				ALU_op = NOP;
+			
+			//no operation
+			OPCODE_NOP: begin
+				ALU_op = ALU_NOP;
 			end
 		endcase
 	end
