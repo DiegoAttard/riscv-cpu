@@ -2,7 +2,7 @@ include cpu_defs::*;
 
 module ControlUnit(
 	input logic [31:0] instruction,
-	output logic regWrite, memWrite, memRead, ALU_src,
+	output logic regWrite, memWrite, memRead, ALU_src, isJump, isBranch,
 	output logic [3:0] ALU_op
 );
 
@@ -18,6 +18,8 @@ module ControlUnit(
 		memRead = 0;
 		ALU_src = 0;
 		ALU_op = 0;
+		isJump = 0;
+		isBranch = 0;
 		
 		case(instruction[6:0])
 		
@@ -153,29 +155,28 @@ module ControlUnit(
 			
 			// B-Type
 			OPCODE_BTYPE: begin
+			
+				isBranch = 1;
+				
 				case(instruction[14:12])
 				
 					//branch if equal operation
 					FUNCT3_BEQ: begin
-						regWrite = 1;
 						ALU_op = ALU_BEQ;
 					end
 					
 					//branch if not equal operation
 					FUNCT3_BNE: begin
-						regWrite = 1;
 						ALU_op = ALU_BNE;
 					end
 					
 					//branch if less than operation
 					FUNCT3_BLT: begin
-						regWrite = 1;
 						ALU_op = ALU_BLT;
 					end
 					
 					//branch if greater than operation
 					FUNCT3_BGE: begin
-						regWrite = 1;
 						ALU_op = ALU_BGE;
 					end
 				endcase
@@ -184,12 +185,14 @@ module ControlUnit(
 			//jump and link operation
 			OPCODE_JAL: begin
 				regWrite = 1;
+				isJump = 1;
 				ALU_op = ALU_ADD;
 			end
 			
 			//jump and link reg operation
 			OPCODE_JALR: begin
 				regWrite = 1;
+				isJump = 1;
 				ALU_op = ALU_ADD;
 			end
 			
