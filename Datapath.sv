@@ -18,8 +18,11 @@ module Datapath(
 	logic memRead;
 	logic ALU_src;
 	logic isJump;
-		
-	assign PC_next = (isJump) ? ALU_result : PC + 4;
+	logic isBranch;
+	logic branch_taken;
+	
+	assign branch_taken = isBranch && (ALU_result == 1);
+	assign PC_next = (isJump || branch_taken) ? ALU_result : PC + 4;
 	
 	ALU ALU_inst(
 		.a(rs1),
@@ -60,6 +63,7 @@ module Datapath(
 		.memRead(memRead),
 		.ALU_src(ALU_src),
 		.isJump(isJump),
+		.isBranch(isBranch),
 		.ALU_op(ALU_op)
 	);
 	
