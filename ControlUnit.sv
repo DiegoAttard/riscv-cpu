@@ -1,4 +1,4 @@
-include cpu_defs::*;
+import cpu_defs::*;
 
 module ControlUnit(
 	input logic [31:0] instruction,
@@ -26,57 +26,59 @@ module ControlUnit(
 			// R-Type
 			OPCODE_RTYPE: begin
 				case(instruction[14:12])
-				
-				//add or sub operation
-				FUNCT3_ADD_SUB: begin
-					case(instruction[31:25])
-					FUNCT7_ADD: begin
-						regWrite = 1;
-						ALU_op = ALU_ADD;
+					
+					//add or sub operation
+					FUNCT3_ADD_SUB: begin
+						case(instruction[31:25])
+							FUNCT7_ADD: begin
+								regWrite = 1;
+								ALU_op = ALU_ADD;
+							end
+							FUNCT7_SUB: begin
+								regWrite = 1;
+								ALU_op = ALU_SUB;
+							end
+						endcase
 					end
-					FUNCT7_SUB: begin
+					
+					//xor operation
+					FUNCT3_XOR: begin
 						regWrite = 1;
-						ALU_op = ALU_SUB;
+						ALU_op = ALU_XOR;
 					end
-				end
-				
-				//xor operation
-				FUNCT3_XOR: begin
-					regWrite = 1;
-					ALU_op = ALU_XOR;
-				end
-				
-				//or operation
-				FUNCT3_OR: begin
-					regWrite = 1;
-					ALU_op = ALU_OR;
-				end
-				
-				//and operation
-				FUNCT3_AND: begin
-					regWrite = 1;
-					ALU_op = ALU_AND;
-				end
-				
-				//shift left logical operation
-				FUNCT3_SLL: begin
-					regWrite = 1;
-					ALU_op = ALU_SLL;
-				end
-				
-				//shift right operations (srl/sra)
-				FUNCT3_SRL_SRA: begin
-					case(instruction[31:25])
-						FUNCT7_SRL: begin
-							regWrite = 1;
-							ALU_op = ALU_SRL;
-						end
-						FUNCT7_SRA: begin
-							regWrite = 1;
-							ALU_op = ALU_SRA;
-						end
-					endcase
-				end
+					
+					//or operation
+					FUNCT3_OR: begin
+						regWrite = 1;
+						ALU_op = ALU_OR;
+					end
+					
+					//and operation
+					FUNCT3_AND: begin
+						regWrite = 1;
+						ALU_op = ALU_AND;
+					end
+					
+					//shift left logical operation
+					FUNCT3_SLL: begin
+						regWrite = 1;
+						ALU_op = ALU_SLL;
+					end
+					
+					//shift right operations (srl/sra)
+					FUNCT3_SRL_SRA: begin
+						case(instruction[31:25])
+							FUNCT7_SRL: begin
+								regWrite = 1;
+								ALU_op = ALU_SRL;
+							end
+							FUNCT7_SRA: begin
+								regWrite = 1;
+								ALU_op = ALU_SRA;
+							end
+						endcase
+					end
+				endcase
 			end
 			
 			

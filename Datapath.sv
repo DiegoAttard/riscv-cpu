@@ -1,4 +1,4 @@
-include cpu_defs::*;
+import cpu_defs::*;
 
 module Datapath(
 	input logic clock,

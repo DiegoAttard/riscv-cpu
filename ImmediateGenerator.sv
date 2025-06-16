@@ -1,4 +1,4 @@
-include cpu_defs::*;
+import cpu_defs::*;
 
 module ImmediateGenerator (
 	input logic [31:0] instruction,

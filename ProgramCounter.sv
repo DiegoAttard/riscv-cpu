@@ -10,7 +10,7 @@ module ProgramCounter #(
 	// increments pc on every positive clock edge
 	always_ff @(posedge clock) begin
 		if (reset) begin
-			data_out <= '0
+			pc_out <= '0;
 		end else begin
 			pc_out <= pc_next;
 		end

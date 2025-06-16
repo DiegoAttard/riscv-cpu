@@ -2,4 +2,10 @@
 RISC_CPU.qpf
 RISC_CPU.qsf
 *.bak
+*.hex
+*.rpt
+*.txt
 db/
+incremental_db/
+output_files/
+simulation/
