@@ -17,11 +17,13 @@ module DataMemory (
 	end
 	
 	// read data from memory when read enable is active
-	always_ff @(posedge clock) begin
-		if (read_enable) begin
-			read_data <= dmem[addr >> 2];
-		end
+	always_comb begin
+		if (read_enable)
+			read_data = dmem[addr >> 2];
+		else
+			read_data = 32'b0;
 	end
+
 	
 	// preload memory
 	initial begin
