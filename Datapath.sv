@@ -13,6 +13,8 @@ module Datapath(
 	logic [31:0] PC_next;
 	logic [31:0] rs1, rs2;
 	logic [31:0] memData;
+	logic [31:0] alu_input_a;
+	logic [31:0] alu_input_b;
 	logic [3:0] ALU_op = ALU_NOP;
 	logic regWrite;
 	logic memWrite;
@@ -27,11 +29,15 @@ module Datapath(
 	
 	// computing next pc value
 	assign PC_next = (isJump || branch_taken) ? ALU_result : PC + 4;
+
+	// selecting alu inputs
+	assign alu_input_a = (isJump) ? PC : rs1;
+	assign alu_input_b = (ALU_src) ? immediate : rs2;
 	
 	// using ALU module to perform arithmetic/logical operations
 	ALU ALU_inst(
-		.a(rs1),
-		.b((ALU_src) ? immediate : rs2),
+		.a(alu_input_a),
+		.b(alu_input_b),
 		.alu_op(ALU_op),
 		.result(ALU_result)
 	);
