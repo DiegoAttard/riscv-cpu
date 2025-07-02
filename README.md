@@ -31,5 +31,5 @@ This project is a from-scratch implementation of a 32-bit RISC-V CPU based on th
 A definitions file (`cpu_def.sv`) is used to ensure consistency across all modules and stores constants such as:
 
 * Opcode values (`OPCODE_RTYPE`, `OPCODE_ITYPE`, etc.)
-* 'funct3' and 'funct7' codes for specific instructions
+* `funct3` and `funct7` codes for specific instructions
 * ALU operation codes
