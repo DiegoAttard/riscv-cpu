@@ -15,6 +15,7 @@ module Datapath(
 	logic [31:0] memData;
 	logic [31:0] alu_input_a;
 	logic [31:0] alu_input_b;
+	logic [31:0] branch_target;
 	logic [3:0] ALU_op = ALU_NOP;
 	logic regWrite;
 	logic memWrite;
@@ -27,8 +28,11 @@ module Datapath(
 	// checking if a branch is taken
 	assign branch_taken = isBranch && (ALU_result == 1);
 	
+	// computing branch target
+	assign branch_target = PC + immediate;
+		
 	// computing next pc value
-	assign PC_next = (isJump || branch_taken) ? ALU_result : PC + 4;
+	assign PC_next = isJump ? ALU_result : branch_taken ? branch_target : PC + 4;
 
 	// selecting alu inputs
 	assign alu_input_a = (isJump) ? PC : rs1;

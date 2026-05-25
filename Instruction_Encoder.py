@@ -207,19 +207,19 @@ def parse_and_encode(instr_str):
         elif inst == "sra":
             return to_hex(encode_sra(int(parts[1][1:]), int(parts[2][1:]), int(parts[3][1:])))
         elif inst == "addi":
-            return to_hex(encode_addi(int(parts[1][1:]), int(parts[2][1:]), int(parts[3])))
+            return to_hex(encode_addi(int(parts[1][1:]), int(parts[2][1:]), int(parts[3], 0)))
         elif inst == "xori":
-            return to_hex(encode_xori(int(parts[1][1:]), int(parts[2][1:]), int(parts[3])))
+            return to_hex(encode_xori(int(parts[1][1:]), int(parts[2][1:]), int(parts[3], 0)))
         elif inst == "ori":
-            return to_hex(encode_ori(int(parts[1][1:]), int(parts[2][1:]), int(parts[3])))
+            return to_hex(encode_ori(int(parts[1][1:]), int(parts[2][1:]), int(parts[3], 0)))
         elif inst == "andi":
-            return to_hex(encode_andi(int(parts[1][1:]), int(parts[2][1:]), int(parts[3])))
+            return to_hex(encode_andi(int(parts[1][1:]), int(parts[2][1:]), int(parts[3], 0)))
         elif inst == "slli":
-            return to_hex(encode_slli(int(parts[1][1:]), int(parts[2][1:]), int(parts[3])))
+            return to_hex(encode_slli(int(parts[1][1:]), int(parts[2][1:]), int(parts[3], 0)))
         elif inst == "srli":
-            return to_hex(encode_srli(int(parts[1][1:]), int(parts[2][1:]), int(parts[3])))
+            return to_hex(encode_srli(int(parts[1][1:]), int(parts[2][1:]), int(parts[3], 0)))
         elif inst == "srai":
-            return to_hex(encode_srai(int(parts[1][1:]), int(parts[2][1:]), int(parts[3])))
+            return to_hex(encode_srai(int(parts[1][1:]), int(parts[2][1:]), int(parts[3], 0)))
         elif inst == "lw":
             rd = int(parts[1][1:])
             imm_str, rs1_str = parts[2].split('(')

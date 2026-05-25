@@ -16,18 +16,15 @@ module Datapath_tb;
 	end
 
 	initial begin
-		// for waveform viewing
-		$dumpfile("datapath_tb.vcd");
-		$dumpvars(0, Datapath_tb);
 		
 		reset = 1;
 		#10;
 		reset = 0;
 		
 		// simulation run time
-		#300;
+		#1000;
 		
-		$finish;
+		$stop;
 	end
 	
 endmodule
