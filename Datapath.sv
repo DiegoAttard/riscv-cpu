@@ -17,6 +17,8 @@ module Datapath(
 	logic [31:0] alu_input_b;
 	logic [31:0] branch_target;
 	logic [3:0] ALU_op = ALU_NOP;
+	logic [1:0] memSize;
+	logic trapCause;
 	logic regWrite;
 	logic memWrite;
 	logic memRead;
@@ -24,6 +26,10 @@ module Datapath(
 	logic isJump;
 	logic isBranch;
 	logic branch_taken;
+	logic memUnsigned;
+	logic isEcall;
+	logic isEbreak;
+	logic ajustPC;
 	
 	// checking if a branch is taken
 	assign branch_taken = isBranch && (ALU_result == 1);
@@ -35,14 +41,26 @@ module Datapath(
 	assign PC_next = isJump ? ALU_result : branch_taken ? branch_target : PC + 4;
 
 	// selecting alu inputs
-	assign alu_input_a = (isJump) ? PC : rs1;
+	assign alu_input_a = (isJump || adjustPC) ? PC : rs1;
 	assign alu_input_b = (ALU_src) ? immediate : rs2;
+	
+	// determining cause of trap
+	always_comb begin
+		if (isEcall)
+			trapCause = TRAP_ECALL;
+			PC_next = PC;
+		else if (Ebreak)
+			trapCause = TRAP_EBREAK;
+			PC_next = PC;
+	end
 	
 	// using ALU module to perform arithmetic/logical operations
 	ALU ALU_inst(
 		.a(alu_input_a),
 		.b(alu_input_b),
 		.alu_op(ALU_op),
+		.memSize(memSize),
+		.memUnsigned(memUnisgned),
 		.result(ALU_result)
 	);
 	
@@ -82,6 +100,11 @@ module Datapath(
 		.ALU_src(ALU_src),
 		.isJump(isJump),
 		.isBranch(isBranch),
+		.memUnsigned(memUnsigned),
+		.isEcall(isEcall),
+		.isEbreak(isEbreak),
+		.adjustPC(adjustPC),
+		.memSize(memSize),
 		.ALU_op(ALU_op)
 	);
 	

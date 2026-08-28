@@ -2,8 +2,10 @@ import cpu_defs::*;
 
 module ControlUnit(
 	input logic [31:0] instruction,
-	output logic regWrite, memWrite, memRead, ALU_src, isJump, isBranch,
+	output logic regWrite, memWrite, memRead, ALU_src, isJump, isBranch, memUnsigned, isEcall, isEbreak, adjustPC,
+	output logic [1:0] memSize,
 	output logic [3:0] ALU_op
+	
 );
 
 
@@ -18,141 +20,176 @@ module ControlUnit(
 		memRead = 0;
 		ALU_src = 0;
 		ALU_op = 0;
+		memSize = 0;
+		memUnsigned = 0;
 		isJump = 0;
 		isBranch = 0;
+		isEcall = 0;
+		isEbreak = 0;
+		adjustPC = 0;
 		
 		case(instruction[6:0])
 		
 			// R-Type
 			OPCODE_RTYPE: begin
+			
+				//setting control signals for all the R-Type instructions
+				regWrite = 1;
+				memSize = SIZE_WORD;
+			
 				case(instruction[14:12])
 					
 					//add or sub operation
 					FUNCT3_ADD_SUB: begin
 						case(instruction[31:25])
 							FUNCT7_ADD: begin
-								regWrite = 1;
 								ALU_op = ALU_ADD;
+								//need to pass memory size for all add operations
+								memSize = SIZE_WORD;
 							end
 							FUNCT7_SUB: begin
-								regWrite = 1;
 								ALU_op = ALU_SUB;
 							end
 						endcase
 					end
 					
 					//xor operation
-					FUNCT3_XOR: begin
-						regWrite = 1;
-						ALU_op = ALU_XOR;
-					end
+					FUNCT3_XOR: ALU_op = ALU_XOR;
 					
 					//or operation
-					FUNCT3_OR: begin
-						regWrite = 1;
-						ALU_op = ALU_OR;
-					end
+					FUNCT3_OR: ALU_op = ALU_OR;
 					
 					//and operation
-					FUNCT3_AND: begin
-						regWrite = 1;
-						ALU_op = ALU_AND;
-					end
+					FUNCT3_AND: ALU_op = ALU_AND;
 					
 					//shift left logical operation
-					FUNCT3_SLL: begin
-						regWrite = 1;
-						ALU_op = ALU_SLL;
-					end
+					FUNCT3_SLL: ALU_op = ALU_SLL;
 					
 					//shift right operations (srl/sra)
 					FUNCT3_SRL_SRA: begin
 						case(instruction[31:25])
 							FUNCT7_SRL: begin
-								regWrite = 1;
 								ALU_op = ALU_SRL;
 							end
 							FUNCT7_SRA: begin
-								regWrite = 1;
 								ALU_op = ALU_SRA;
 							end
 						endcase
 					end
+					
+					//shift less than operation
+					FUNCT3_SLT: ALU_op = ALU_SLT;
+					
+					//shift less than unsigned operation
+					FUNCT3_SLTU: ALU_op = ALU_SLTU;
+					
 				endcase
 			end
 			
 			
-			// I_Type
+			// I-Type
 			OPCODE_ITYPE: begin
+			
+				//setting control signals for all the I-Type instructions
+				regWrite = 1;
+				ALU_src = 1;
+			
 				case(instruction[14:12])
 					
 					//addi operation
 					FUNCT3_ADDI: begin
-						regWrite = 1;
-						ALU_src = 1;
 						ALU_op = ALU_ADD;
+						//need to pass memory size for all add operations
+						memSize = SIZE_WORD;
 					end
 					
 					//xori operation
-					FUNCT3_XOR: begin
-						regWrite = 1;
-						ALU_src = 1;
-						ALU_op = ALU_XOR;
-					end
+					FUNCT3_XOR: ALU_op = ALU_XOR;
 					
 					//ori operation
-					FUNCT3_OR: begin
-						regWrite = 1;
-						ALU_src = 1;
-						ALU_op = ALU_OR;
-					end
+					FUNCT3_OR: ALU_op = ALU_OR;
 					
 					//andi operation
-					FUNCT3_AND: begin
-						regWrite = 1;
-						ALU_src = 1;
-						ALU_op = ALU_AND;
-					end
+					FUNCT3_AND: ALU_op = ALU_AND;
 					
 					//shift left logical immediate operation
-					FUNCT3_SLL: begin
-						regWrite = 1;
-						ALU_src = 1;
-						ALU_op = ALU_SLL;
-					end
+					FUNCT3_SLL: ALU_op = ALU_SLL;
 					
 					//shift right immediate operations (srli/srai)
 					FUNCT3_SRL_SRA: begin
 						case(instruction[31:25])
 							FUNCT7_SRL: begin
-								regWrite = 1;
-								ALU_src = 1;
 								ALU_op = ALU_SRL;
 							end
 							FUNCT7_SRA: begin
-								regWrite = 1;
-								ALU_src = 1;
 								ALU_op = ALU_SRA;
 							end
 						endcase
 					end
+					
+					// shift less than immediate operation
+					FUNCT3_SLT: ALU_op = ALU_SLT;
+					
+					//shift less than immediate unsigned operation
+					FUNCT3_SLTU: ALU_op = ALU_SLTU;
 					
 				endcase
 			end
 			
 			//load operation
 			OPCODE_LOAD: begin
+			
+				//setting control signals for all the load instructions
 				regWrite = 1;
 				memRead = 1;
 				ALU_src = 1;
 				ALU_op = ALU_ADD;
+			
+				case(instruction[14:12])
+				
+					//load byte operation
+					FUNCT3_LB: memSize = SIZE_BYTE;
+					
+					//load half operation
+					FUNCT3_LH: memSize = SIZE_HALF;
+
+					
+					//load word operation
+					FUNCT3_LW: memSize = SIZE_WORD;
+					
+					//load byte unsigned operation
+					FUNCT3_LBU: begin
+						memSize = SIZE_BYTE;
+						memUnsigned = 1;
+					end
+					
+					//load half unsigned operation
+					FUNCT3_LHU: begin
+						memSize = SIZE_HALF;
+						memUnsigned = 1;
+					end
+				endcase
 			end
 			
 			//store operation
 			OPCODE_STORE: begin
+			
+				//setting control signals for all the store instructions
 				memWrite = 1;
 				ALU_src = 1;
 				ALU_op = ALU_ADD;
+				
+				case(instruction[14:12])
+				
+					//store byte operation
+					FUNCT3_SB: memSize = SIZE_BYTE;
+					
+					//store half operation
+					FUNCT3_SH: memSize = SIZE_HALF;
+					
+					//store word operation
+					FUNCT3_SW: memSize = SIZE_WORD;
+				endcase
 			end
 			
 			// B-Type
@@ -163,23 +200,27 @@ module ControlUnit(
 				case(instruction[14:12])
 				
 					//branch if equal operation
-					FUNCT3_BEQ: begin
-						ALU_op = ALU_BEQ;
-					end
+					FUNCT3_BEQ: ALU_op = ALU_BEQ;
 					
 					//branch if not equal operation
-					FUNCT3_BNE: begin
-						ALU_op = ALU_BNE;
-					end
+					FUNCT3_BNE: ALU_op = ALU_BNE;
 					
 					//branch if less than operation
-					FUNCT3_BLT: begin
+					FUNCT3_BLT: ALU_op = ALU_BLT;
+					
+					//branch if greater than or equal to operation
+					FUNCT3_BGE: ALU_op = ALU_BGE;
+					
+					//branch if less than unsigned operation
+					FUNCT3_BLTU: begin
 						ALU_op = ALU_BLT;
+						memUnsigned = 1;
 					end
 					
-					//branch if greater than operation
-					FUNCT3_BGE: begin
+					//branch if greater than or equal to unsigned operation
+					FUNCT3_BGEU: begin
 						ALU_op = ALU_BGE;
+						memUnsigned = 1;
 					end
 				endcase
 			end
@@ -198,10 +239,45 @@ module ControlUnit(
 				ALU_op = ALU_ADD;
 			end
 			
-			//no operation
-			OPCODE_NOP: begin
-				ALU_op = ALU_NOP;
+			//load upper immediate operation
+			OPCODE_LUI: begin
+				regWrite = 1;
+				memRead = 1;
+				ALU_src = 1;
+				ALU_op = ALU_ADD;
 			end
+			
+			//add upper immediate to PC operation
+			OPCODE_AUIPC: begin
+				regWrite = 1;
+				memRead = 1;
+				ALU_src = 1;
+				adjustPC = 1;
+				ALU_op = ALU_ADD;
+			end
+			
+			//system operations
+			OPCODE_SYSTEM: begin
+				
+				case(instruction[23:20])
+				
+					//enviornment call operation
+					FUNCT7_ECALL: begin
+						isEcall = 1;
+					end
+					
+					//enviornment break operation
+					FUNCT7_EBREAK: begin
+						isEbreak = 1;
+					end
+				endcase
+			end
+			
+			//no operation
+			OPCODE_NOP: ALU_op = ALU_NOP;
+			
+			default: ALU_op = ALU_NOP;
+			
 		endcase
 	end
 

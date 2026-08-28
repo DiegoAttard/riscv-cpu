@@ -9,32 +9,26 @@ module ImmediateGenerator (
 		case (instruction[6:0])
 		
 			// I-Type
-			OPCODE_ITYPE: begin
-				immediate <= {{20{instruction[31]}}, instruction[31:20]};
-			end
+			OPCODE_ITYPE: immediate <= {{20{instruction[31]}}, instruction[31:20]};
 			
 			// load operation
-			OPCODE_LOAD: begin
-				immediate <= {{20{instruction[31]}}, instruction[31:20]};
-			end
+			OPCODE_LOAD: immediate <= {{20{instruction[31]}}, instruction[31:20]};
 			
 			// store operation
-			OPCODE_STORE: begin
-				immediate <= {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
-			end
+			OPCODE_STORE: immediate <= {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
 			
-			// B-Type
-			OPCODE_BTYPE: begin
-				immediate <= {{19{instruction[31]}}, instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'b0};
-			end
+			// Branch operations
+			OPCODE_BRANCH: immediate <= {{19{instruction[31]}}, instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'b0};
 			
 			// Jump operations
-			OPCODE_JAL: begin
-				immediate <= {{11{instruction[31]}}, instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0};
-			end
-			OPCODE_JALR: begin
-				immediate <= {{20{instruction[31]}}, instruction[31:20]};
-			end
+			OPCODE_JAL: immediate <= {{11{instruction[31]}}, instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0};
+			
+			OPCODE_JALR: immediate <= {{20{instruction[31]}}, instruction[31:20]};
+			
+			// U-type
+			OPCODE_LUI: immediate <= {instruction[31:12], 12'b0};
+			
+			OPCODE_AUIPC: immediate <= {instruction[31:12], 12'b0};
 			
 			default: immediate = 32'd0;
 		endcase
