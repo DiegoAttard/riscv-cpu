@@ -70,18 +70,21 @@ module ControlUnit(
 						case(instruction[31:25])
 							FUNCT7_SRL: begin
 								ALU_op = ALU_SRL;
-							end
+							end#
 							FUNCT7_SRA: begin
 								ALU_op = ALU_SRA;
 							end
 						endcase
 					end
 					
-					//shift less than operation
+					//set less than operation
 					FUNCT3_SLT: ALU_op = ALU_SLT;
 					
-					//shift less than unsigned operation
-					FUNCT3_SLTU: ALU_op = ALU_SLTU;
+					//set less than unsigned operation
+					FUNCT3_SLTU: begin
+						ALU_op = ALU_SLT;
+						memUnsigned = 1;
+					end
 					
 				endcase
 			end
@@ -127,11 +130,14 @@ module ControlUnit(
 						endcase
 					end
 					
-					// shift less than immediate operation
+					// set less than immediate operation
 					FUNCT3_SLT: ALU_op = ALU_SLT;
 					
-					//shift less than immediate unsigned operation
-					FUNCT3_SLTU: ALU_op = ALU_SLTU;
+					//set less than immediate unsigned operation
+					FUNCT3_SLTU: begin
+						ALU_op = ALU_SLT;
+						memUnsigned = 1;
+					end
 					
 				endcase
 			end

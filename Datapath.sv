@@ -16,7 +16,7 @@ module Datapath(
 	logic [31:0] alu_input_a;
 	logic [31:0] alu_input_b;
 	logic [31:0] branch_target;
-	logic [3:0] ALU_op = ALU_NOP;
+	logic [3:0] ALU_op;
 	logic [1:0] memSize;
 	logic trapCause;
 	logic regWrite;

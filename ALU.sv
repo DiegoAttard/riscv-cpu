@@ -26,6 +26,7 @@ module ALU (
 			ALU_SLL: result = a << b[4:0];
 			ALU_SRL: result = a >> b[4:0];
 			ALU_SRA: result = $signed(a) >>> b [4:0];
+			ALU_SLT: result = memUnsigned ? (((a < b) ? 32'd1 : 32'd0) : (($signed(a) < $signed(b)) ? 32'd1 : 32'd0);
 			ALU_BEQ: result = (a == b) ? 32'd1 : 32'd0; // outputs 1 if equal and 0 otherwise
 			ALU_BNE: result = (a != b) ? 32'd1 : 32'd0; // outputs 1 if not equal and 0 otherwise
 			ALU_BLT: result = memUnsigned ? ((a < b) ? 32'd1 : 32'd0) : (($signed(a) < $signed(b)) ? 32'd1 : 32'd0); // outputs 1 if less than and 0 otherwise
