@@ -194,66 +194,60 @@ def encode_sw(rs1, rs2, imm):
 def encode_beq(rs1, rs2, imm):
     opcode = 0b1100011
     funct3 = 0b000
-    imm = imm >> 1
-    imm12 = (imm >> 11) & 0x1
+    imm12 = (imm >> 12) & 0x1
     imm10_5 = (imm >> 5) & 0x3F
     imm4_1 = (imm >> 1) & 0xF
-    imm11 = (imm >> 10) & 0x1
+    imm11 = (imm >> 11) & 0x1
     instr = (imm12 << 31) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (imm11 << 7) | opcode
     return instr
 
 def encode_bne(rs1, rs2, imm):
     opcode = 0b1100011
     funct3 = 0b001
-    imm = imm >> 1
-    imm12 = (imm >> 11) & 0x1
+    imm12 = (imm >> 12) & 0x1
     imm10_5 = (imm >> 5) & 0x3F
     imm4_1 = (imm >> 1) & 0xF
-    imm11 = (imm >> 10) & 0x1
+    imm11 = (imm >> 11) & 0x1
     instr = (imm12 << 31) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (imm11 << 7) | opcode
     return instr
 
 def encode_blt(rs1, rs2, imm):
     opcode = 0b1100011
     funct3 = 0b100
-    imm = imm >> 1
-    imm12 = (imm >> 11) & 0x1
+    imm12 = (imm >> 12) & 0x1
     imm10_5 = (imm >> 5) & 0x3F
     imm4_1 = (imm >> 1) & 0xF
-    imm11 = (imm >> 10) & 0x1
+    imm11 = (imm >> 11) & 0x1
     instr = (imm12 << 31) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (imm11 << 7) | opcode
     return instr
 
 def encode_bge(rs1, rs2, imm):
     opcode = 0b1100011
     funct3 = 0b101
-    imm = imm >> 1
-    imm12 = (imm >> 11) & 0x1
+    imm12 = (imm >> 12) & 0x1
     imm10_5 = (imm >> 5) & 0x3F
     imm4_1 = (imm >> 1) & 0xF
-    imm11 = (imm >> 10) & 0x1
+    imm11 = (imm >> 11) & 0x1
     instr = (imm12 << 31) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (imm11 << 7) | opcode
     return instr
 
 def encode_bltu(rs1, rs2, imm):
     opcode = 0b1100011
     funct3 = 0b110
-    imm = imm >> 1
-    imm12 = (imm >> 11) & 0x1
+    imm12 = (imm >> 12) & 0x1
     imm10_5 = (imm >> 5) & 0x3F
     imm4_1 = (imm >> 1) & 0xF
-    imm11 = (imm >> 10) & 0x1
+    imm11 = (imm >> 11) & 0x1
     instr = (imm12 << 31) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (imm11 << 7) | opcode
     return instr
 
 def encode_bgeu(rs1, rs2, imm):
     opcode = 0b1100011
     funct3 = 0b111
-    imm = imm >> 1
-    imm12 = (imm >> 11) & 0x1
+    imm12 = (imm >> 12) & 0x1
     imm10_5 = (imm >> 5) & 0x3F
     imm4_1 = (imm >> 1) & 0xF
-    imm11 = (imm >> 10) & 0x1
+    imm11 = (imm >> 11) & 0x1
     instr = (imm12 << 31) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (imm11 << 7) | opcode
     return instr
 

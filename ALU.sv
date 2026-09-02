@@ -4,21 +4,17 @@ module ALU (
 	input logic [31:0] a,
 	input logic [31:0] b,
 	input logic [3:0] alu_op,
-	input logic [1:0] memSize,
 	input logic memUnsigned,
 	output logic [31:0] result
 );
 
+	logic [31:0] add_result;
+
 	// computes alu instructions
 	always_comb begin
+		result = 32'd0;
 		case (alu_op)
-			ALU_ADD: begin
-				case (memSize)
-					SIZE_WORD: result = a+b;
-					SIZE_HALF: result = {16'b0, (a+b)[15:0]};
-					SIZE_BYTE: result = {24'b0, (a+b)[7:0]};
-				endcase
-			end
+			ALU_ADD: result = a + b;
 			ALU_SUB: result = a - b;
 			ALU_AND: result = a & b;
 			ALU_OR: result = a | b;
@@ -26,7 +22,7 @@ module ALU (
 			ALU_SLL: result = a << b[4:0];
 			ALU_SRL: result = a >> b[4:0];
 			ALU_SRA: result = $signed(a) >>> b [4:0];
-			ALU_SLT: result = memUnsigned ? (((a < b) ? 32'd1 : 32'd0) : (($signed(a) < $signed(b)) ? 32'd1 : 32'd0);
+			ALU_SLT: result = memUnsigned ? ((a < b) ? 32'd1 : 32'd0) : (($signed(a) < $signed(b)) ? 32'd1 : 32'd0);
 			ALU_BEQ: result = (a == b) ? 32'd1 : 32'd0; // outputs 1 if equal and 0 otherwise
 			ALU_BNE: result = (a != b) ? 32'd1 : 32'd0; // outputs 1 if not equal and 0 otherwise
 			ALU_BLT: result = memUnsigned ? ((a < b) ? 32'd1 : 32'd0) : (($signed(a) < $signed(b)) ? 32'd1 : 32'd0); // outputs 1 if less than and 0 otherwise

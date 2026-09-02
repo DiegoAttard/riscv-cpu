@@ -1,7 +1,11 @@
+import cpu_defs::*;
+
 module RegisterFile (
 	input logic clock,
 	input logic reset,
 	input logic regWrite,
+	input logic memUnsigned,
+	input logic [1:0] memSize,
 	input logic [4:0] readAddr1,
 	input logic [4:0] readAddr2,
 	input logic [4:0] writeAddr,
@@ -21,7 +25,11 @@ module RegisterFile (
 				registerArray[i] <= 0;
 			end
 		end else if (regWrite && writeAddr) begin
-			registerArray[writeAddr] <= writeData;
+			case(memSize)
+				SIZE_WORD: registerArray[writeAddr] <= writeData;
+				SIZE_HALF: registerArray[writeAddr] <= memUnsigned ? {16'b0, writeData[15:0]} : {{16{writeData[15]}}, writeData[15:0]};
+				SIZE_BYTE: registerArray[writeAddr] <= memUnsigned ? {24'b0, writeData[24:0]} : {{24{writeData[7]}}, writeData[7:0]};
+			endcase
 		end
 	end
 	

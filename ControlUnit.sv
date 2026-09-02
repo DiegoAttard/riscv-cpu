@@ -2,7 +2,7 @@ import cpu_defs::*;
 
 module ControlUnit(
 	input logic [31:0] instruction,
-	output logic regWrite, memWrite, memRead, ALU_src, isJump, isBranch, memUnsigned, isEcall, isEbreak, adjustPC,
+	output logic regWrite, memWrite, memRead, ALU_src, isJump, isBranch, memUnsigned, isEcall, isEbreak, adjustPC, uType,
 	output logic [1:0] memSize,
 	output logic [3:0] ALU_op
 	
@@ -27,6 +27,7 @@ module ControlUnit(
 		isEcall = 0;
 		isEbreak = 0;
 		adjustPC = 0;
+		uType = 0;
 		
 		case(instruction[6:0])
 		
@@ -70,7 +71,7 @@ module ControlUnit(
 						case(instruction[31:25])
 							FUNCT7_SRL: begin
 								ALU_op = ALU_SRL;
-							end#
+							end
 							FUNCT7_SRA: begin
 								ALU_op = ALU_SRA;
 							end
@@ -198,8 +199,8 @@ module ControlUnit(
 				endcase
 			end
 			
-			// B-Type
-			OPCODE_BTYPE: begin
+			// Branch Type
+			OPCODE_BRANCH: begin
 			
 				isBranch = 1;
 				
@@ -241,24 +242,23 @@ module ControlUnit(
 			//jump and link reg operation
 			OPCODE_JALR: begin
 				regWrite = 1;
-				isJump = 1;
 				ALU_op = ALU_ADD;
 			end
 			
 			//load upper immediate operation
 			OPCODE_LUI: begin
 				regWrite = 1;
-				memRead = 1;
 				ALU_src = 1;
+				uType = 1;
 				ALU_op = ALU_ADD;
 			end
 			
 			//add upper immediate to PC operation
 			OPCODE_AUIPC: begin
 				regWrite = 1;
-				memRead = 1;
 				ALU_src = 1;
 				adjustPC = 1;
+				uType = 1;
 				ALU_op = ALU_ADD;
 			end
 			

@@ -9,7 +9,7 @@ package cpu_defs;
 	parameter OPCODE_JAL = 7'b1101111;
 	parameter OPCODE_JALR = 7'b1100111;
 	parameter OPCODE_LUI = 7'b0110111;
-	parameter OPCODE_AUIPC = 7'0010111;
+	parameter OPCODE_AUIPC = 7'b0010111;
 	parameter OPCODE_SYSTEM = 7'b1110011;
 	parameter OPCODE_NOP = 7'b0000000;
 	
@@ -66,9 +66,9 @@ package cpu_defs;
 	parameter ALU_NOP = 5'b10000; // no operation
 	
 	//memory size
-	parameter SIZE_BYTE = 2'b00;
+	parameter SIZE_WORD = 2'b00;
 	parameter SIZE_HALF = 2'b01;
-	parameter SIZE_WORD = 2'b10;
+	parameter SIZE_BYTE = 2'b10;
 	
 	//trap cause
 	parameter TRAP_ECALL = 1'b0;

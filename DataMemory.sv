@@ -1,7 +1,10 @@
+import cpu_defs::*;
+
 module DataMemory (
 	input logic clock,
 	input logic write_enable,
 	input logic read_enable,
+	input logic [1:0] memSize,
 	input logic [31:0] addr,
 	input logic [31:0] write_data,
 	output logic [31:0] read_data
@@ -12,7 +15,11 @@ module DataMemory (
 	// write data to memory when write is enabled	
 	always_ff @(posedge clock) begin
 		if (write_enable) begin
-			dmem[addr >> 2] <= write_data;
+			case(memSize)
+				SIZE_WORD: dmem[addr >> 2] <= write_data;
+				SIZE_HALF: dmem[addr >> 2] <= {16'b0, write_data[15:0]};
+				SIZE_BYTE: dmem[addr >> 2] <= {24'b0, write_data[7:0]};
+			endcase
 		end
 	end
 	
