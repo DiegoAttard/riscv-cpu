@@ -23,7 +23,6 @@ module Datapath(
 	logic memWrite;
 	logic memRead;
 	logic ALU_src;
-	logic isJump;
 	logic isBranch;
 	logic branch_taken;
 	logic memUnsigned;
@@ -51,7 +50,7 @@ module Datapath(
 	end
 	
 	// selecting alu inputs
-	assign alu_input_a = (isJump || adjustPC) ? PC : rs1;
+	assign alu_input_a = ((instruction[6:0] == OPCODE_JAL) || adjustPC) ? PC : rs1;
 	assign alu_input_b = (ALU_src) ? immediate : rs2;
 	
 	
@@ -100,7 +99,6 @@ module Datapath(
 		.memWrite(memWrite),
 		.memRead(memRead),
 		.ALU_src(ALU_src),
-		.isJump(isJump),
 		.isBranch(isBranch),
 		.memUnsigned(memUnsigned),
 		.isEcall(isEcall),
