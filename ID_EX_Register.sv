@@ -9,9 +9,9 @@ module ID_EX_Register (
 	input logic [31:0] immediate_in,
 	
 	// register addresses in
-	input logic [4:0] rs1_address_in,
-	input logic [4:0] rs2_address_in,
-	input logic [4:0] rd_address_in,
+	input logic [4:0] rs1_addr_in,
+	input logic [4:0] rs2_addr_in,
+	input logic [4:0] rd_addr_in,
 	
 	// control signals in
 	input logic regWrite_in,
@@ -22,9 +22,11 @@ module ID_EX_Register (
    input logic memUnsigned_in,
    input logic isEcall_in,
    input logic isEbreak_in,
+	input logic isJump_in,
    input logic adjustPC_in,
+	input logic usePC_in,
    input logic [1:0] memSize_in,
-   input logic [3:0] ALU_op_in,
+   input logic [4:0] ALU_op_in,
 	
 	// data to execute stage
    output logic [31:0] PC_out,
@@ -46,9 +48,11 @@ module ID_EX_Register (
    output logic memUnsigned_out,
    output logic isEcall_out,
    output logic isEbreak_out,
+	output logic isJump_out,
    output logic adjustPC_out,
+	output logic usePC_out,
    output logic [1:0] memSize_out,
-   output logic [3:0] ALU_op_out
+   output logic [4:0] ALU_op_out
 );
 	
 	always_ff @(posedge clock or posedge reset) begin
@@ -68,7 +72,9 @@ module ID_EX_Register (
            memUnsigned_out <= 1'b0;
            isEcall_out <= 1'b0;
            isEbreak_out <= 1'b0;
+			  isJump_out <= 1'b0;
            adjustPC_out <= 1'b0;
+			  usePC_out <= 1'b0;
            memSize_out <= 2'b0;
            ALU_op_out <= 4'b0;
        end else begin
@@ -87,7 +93,9 @@ module ID_EX_Register (
            memUnsigned_out <= memUnsigned_in;
            isEcall_out <= isEcall_in;
            isEbreak_out <= isEbreak_in;
+			  isJump_out <= isJump_in;
            adjustPC_out <= adjustPC_in;
+			  usePC_out <= usePC_in;
            memSize_out <= memSize_in;
            ALU_op_out <= ALU_op_in;
        end

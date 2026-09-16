@@ -71,7 +71,7 @@ package cpu_defs;
 	parameter SIZE_BYTE = 2'b10;
 	
 	//trap cause
-	parameter TRAP_ECALL = 1'b0;
-	parameter TRAP_EBREAK = 1'b1;
+	parameter TRAP_ECALL = 2'b1;
+	parameter TRAP_EBREAK = 2'b10;
 
 endpackage

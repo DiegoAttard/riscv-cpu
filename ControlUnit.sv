@@ -2,7 +2,7 @@ import cpu_defs::*;
 
 module ControlUnit(
 	input logic [31:0] instruction,
-	output logic regWrite, memWrite, memRead, ALU_src, isBranch, memUnsigned, isEcall, isEbreak, adjustPC, uType,
+	output logic regWrite, memWrite, memRead, ALU_src, isBranch, memUnsigned, isEcall, isEbreak, isJump, adjustPC, uType,
 	output logic [1:0] memSize,
 	output logic [3:0] ALU_op
 	
@@ -25,6 +25,7 @@ module ControlUnit(
 		isBranch = 0;
 		isEcall = 0;
 		isEbreak = 0;
+		isJump = 0;
 		adjustPC = 0;
 		uType = 0;
 		
@@ -233,12 +234,14 @@ module ControlUnit(
 			
 			//jump and link operation
 			OPCODE_JAL: begin
+				isJump = 1;
 				regWrite = 1;
 				ALU_op = ALU_ADD;
 			end
 			
 			//jump and link reg operation
 			OPCODE_JALR: begin
+				isJump = 1;
 				regWrite = 1;
 				ALU_op = ALU_ADD;
 			end

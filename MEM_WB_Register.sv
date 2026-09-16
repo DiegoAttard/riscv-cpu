@@ -14,6 +14,7 @@ module MEM_WB_Register (
 	input logic regWrite_in,
 	input logic memRead_in,
 	input logic memUnsigned_in,
+	input logic isJump_in,
 	input logic [1:0] memSize_in,
 
 	// data to writeback stage
@@ -28,6 +29,7 @@ module MEM_WB_Register (
 	output logic regWrite_out,
 	output logic memRead_out,
 	output logic memUnsigned_out,
+	output logic isJump_out,
 	output logic [1:0] memSize_out
 );
 
@@ -40,6 +42,7 @@ module MEM_WB_Register (
 			regWrite_out <= 1'b0;
 			memRead_out <= 1'b0;
 			memUnsigned_out <= 1'b0;
+			isJump_out <= 1'b0;
 			memSize_out <= 2'b0;
 		end else begin
 			PC_out <= PC_in;
@@ -49,6 +52,7 @@ module MEM_WB_Register (
 			regWrite_out <= regWrite_in;
 			memRead_out <= memRead_in;
 			memUnsigned_out <= memUnsigned_in;
+			isJump_out <= isJump_in;
 			memSize_out <= memSize_in;
 		end
 	end

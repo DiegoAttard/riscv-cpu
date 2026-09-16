@@ -15,6 +15,7 @@ module EX_MEM_Register (
 	input logic memWrite_in,
 	input logic memRead_in,
 	input logic memUnsigned_in,
+	input logic isJump_in,
 	input logic [1:0] memSize_in,
 
 	// data to memory stage
@@ -30,6 +31,7 @@ module EX_MEM_Register (
 	output logic memWrite_out,
 	output logic memRead_out,
 	output logic memUnsigned_out,
+	output logic isJump_out,
 	output logic [1:0] memSize_out
 );
 
@@ -43,6 +45,7 @@ module EX_MEM_Register (
 			memWrite_out <= 1'b0;
 			memRead_out <= 1'b0;
 			memUnsigned_out <= 1'b0;
+			isJump_out <= 1'b0;
 			memSize_out <= 2'b0;
 		end else begin
 			PC_out <= PC_in;
@@ -53,6 +56,7 @@ module EX_MEM_Register (
 			memWrite_out <= memWrite_in;
 			memRead_out <= memRead_in;
 			memUnsigned_out <= memUnsigned_in;
+			isJump_out <= isJump_in;
 			memSize_out <= memSize_in;
 		end
 	end
