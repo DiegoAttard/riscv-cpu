@@ -29,18 +29,24 @@ module Datapath(
 	logic [31:0] alu_input_a;
 	logic [31:0] alu_input_b;
 	logic [31:0] branch_target;
+	logic [31:0] rs1_forwarded;
+	logic [31:0] rs2_forwarded;
+	logic [31:0] writeData_WB;
+	logic [31:0] forwardData_MEM;
 	logic [4:0] rs1_addr_EX;
 	logic [4:0] rs2_addr_EX;
 	logic [4:0] rd_addr_EX;
 	logic [4:0] rd_addr_MEM;
 	logic [4:0] rd_addr_WB;
-	logic [4:0] ALU_op;
-	logic [4:0] ALU_op_EX;
+	logic [3:0] ALU_op;
+	logic [3:0] ALU_op_EX;
 	logic [1:0] memSize;
 	logic [1:0] memSize_EX;
 	logic [1:0] memSize_MEM;
 	logic [1:0] memSize_WB;
 	logic [1:0] trapCause;
+	logic [1:0] forwardA;
+	logic [1:0] forwardB;
 	logic regWrite;
 	logic regWrite_EX;
 	logic regWrite_MEM;
@@ -98,10 +104,21 @@ module Datapath(
 	assign usePC = instruction_ID[6:0] == OPCODE_JAL;
 	
 	// selecting alu inputs
-	assign alu_input_a = (usePC_EX || adjustPC_EX) ? PC_EX : rs1_EX;
-	assign alu_input_b = (ALU_src_EX) ? immediate_EX : rs2_EX;
+	assign alu_input_a = (usePC_EX || adjustPC_EX) ? PC_EX : rs1_forwarded;
+	assign alu_input_b = (ALU_src_EX) ? immediate_EX : rs2_forwarded;
 	
+	//selecting the final value written back to the register file
+	assign writeData_WB = (isJump_WB) ? PC_WB + 4 : (memRead_WB) ? memData_WB : ALU_result_WB;
 	
+	//selecting the value that can be forwarded to the MEM stage
+	assign forwardData_MEM = (isJump_MEM) ? PC_MEM + 4 : ALU_result_MEM;
+	
+	// selecting the new value for rs1
+	assign rs1_forwarded = (forwardA == 2'b10) ? forwardData_MEM : (forwardA == 2'b01) ? writeData_WB : rs1_EX;
+
+	// selecting the new value for rs2
+	assign rs2_forwarded = (forwardB == 2'b10) ? forwardData_MEM : (forwardB == 2'b01) ? writeData_WB : rs2_EX;
+
 	
 	// using program counter module to hold the address of the current instruction
 	ProgramCounter PC_inst(
@@ -155,7 +172,7 @@ module Datapath(
 		.readAddr1(uType ? 5'd0 : instruction_ID[19:15]),
 		.readAddr2(instruction_ID[24:20]),
 		.writeAddr(rd_addr_WB),
-		.writeData((isJump_WB) ? PC_WB + 4 : ((memRead_WB) ? memData_WB : ALU_result_WB)),
+		.writeData(writeData_WB),
 		.readData1(rs1),
 		.readData2(rs2)
 	);
@@ -212,6 +229,18 @@ module Datapath(
 		.ALU_op_out(ALU_op_EX)
 	);
 	
+	// using forwarding unit to detect RAW hazards in the EX stage
+	ForwardingUnit forwarding_unit_inst(
+		.rs1_addr_EX(rs1_addr_EX),
+		.rs2_addr_EX(rs2_addr_EX),
+		.rd_addr_MEM(rd_addr_MEM),
+		.rd_addr_WB(rd_addr_WB),
+		.regWrite_MEM(regWrite_MEM),
+		.regWrite_WB(regWrite_WB),
+		.forwardA(forwardA),
+		.forwardB(forwardB)
+	);
+	
 	// using ALU module to perform arithmetic/logical operations
 	ALU ALU_inst(
 		.a(alu_input_a),
@@ -227,7 +256,7 @@ module Datapath(
 		.reset(reset),
 		.PC_in(PC_EX),
 		.ALU_result_in(ALU_result),
-		.rs2_data_in(rs2_EX),
+		.rs2_data_in(rs2_forwarded),
 		.rd_addr_in(rd_addr_EX),
 		.regWrite_in(regWrite_EX),
 		.memWrite_in(memWrite_EX),

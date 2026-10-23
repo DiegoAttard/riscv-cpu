@@ -26,7 +26,7 @@ module ID_EX_Register (
    input logic adjustPC_in,
 	input logic usePC_in,
    input logic [1:0] memSize_in,
-   input logic [4:0] ALU_op_in,
+   input logic [3:0] ALU_op_in,
 	
 	// data to execute stage
    output logic [31:0] PC_out,
@@ -52,7 +52,7 @@ module ID_EX_Register (
    output logic adjustPC_out,
 	output logic usePC_out,
    output logic [1:0] memSize_out,
-   output logic [4:0] ALU_op_out
+   output logic [3:0] ALU_op_out
 );
 	
 	always_ff @(posedge clock or posedge reset) begin
